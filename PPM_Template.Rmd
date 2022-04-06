@@ -1,0 +1,234 @@
+---
+geometry: 'left=.5in,right=.5in,top = 35pt,bottom=20pt,headsep=.2in'
+
+header-includes: 
+   #\usepackage{float}
+   \usepackage{paralist}
+   \usepackage{indentfirst}
+   \let\itemize\compactitem
+   \usepackage{booktabs}
+   \usepackage{makecell}
+   \usepackage{graphicx}
+   \usepackage{lastpage}
+   \usepackage{fancyhdr}
+   \usepackage{xcolor}
+   \usepackage{titlesec}
+   \usepackage{paralist}
+   \usepackage{changepage}
+   \pagestyle{fancy}
+   \definecolor{matcblue}{HTML}{0046AD}
+   \definecolor{matcorange}{HTML}{FF7900}
+   \setlength\headheight{25pt}
+   \fancyhead[L]{\raisebox{-.3\height}[0pt][0pt]{\includegraphics[width=1.7cm]{../images/logo.png}}}
+   \fancyhead[R]{\bfseries \fontsize{19}{22} \selectfont \textcolor{matcblue}{Program Performance Matrix}}
+   \fancyfoot[R]{\fontsize{6}{8} \selectfont \textcolor{matcblue}{\thepage\ of \pageref{LastPage}}}
+
+   \let\itemize\compactitem
+
+
+
+output: 
+  pdf_document:
+    toc: false
+    template: default.latex
+    keep_tex: no
+
+
+---
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+knitr.table.format = 'latex'
+knitr::opts_chunk$set(comment = NA, echo=FALSE, message = FALSE, warnings = FALSE)
+#knitr::opts_chunk$set(message = FALSE)
+
+##How to add medalion and arrows to summary table: 
+##      https://stackoverflow.com/questions/38555040/alignment-of-images-in-tables-with-markdown-rstudio-and-knitr
+
+```
+<!-- \setlength{\parskip}{5mm plus2mm minus2mm} -->
+
+# Program:  `r paste0(description[1]  ,'  (',description[2],')')`
+
+The purpose of the Program Performance Matrix is to provide clear, consistent, and objective criteria for academic program evaluation. These data provide a quantitative view of an academic program's competitive intensity, capacity to educate students, uniqueness, and financial viability.  This is one of many resources for informing whether to grow, sustain, fix, or sunset programs.  It is organized into criteria with specific measures.  Each criterion includes a single score summarizing the performance of the corresponding measures with a comparison to last year.  Each measure includes trends from the three most recently completed academic years and an MATC benchmark for intra-college comparisons.  Whenever possible, these measures parallel Wisconsin Technical College System (WTCS) Outcomes Based Funding measures to align with WTCS expectations.  Externally sourced data are used where applicable to gauge the academic program's impact in the community.\par
+```{r}
+
+library(huxtable)
+library(grDevices)
+
+    matcblue <- '#0046AD' 
+    matcdarkblue <- '#001a40'
+    matcorange <- '#FF7900'
+    matcorange2 <- '#FFE4CC'
+   
+as_hux(s,add_colnames = TRUE) %>%
+   set_escape_contents(value = FALSE) %>%
+   set_position('left') %>%
+   set_col_width(value = c('6cm','3cm','1cm','1.5cm','2.5cm')) %>%
+   set_all_border_colors(col = 1, every(), "black") %>%
+   add_rows(c(paste0(FISCAL_YEAR-1,'-',FISCAL_YEAR-2000,' Academic Year'),'','','',cr_score[3]),after = 0) %>%
+   set_wrap(value= TRUE) %>%
+   merge_cells(row = 1,col = 1:ncol(.)) %>% 
+   set_background_color(row = 1,col = 1:ncol(.),matcorange2) %>% 
+   set_cell_properties(row = 1, col = 1:ncol(.),
+                       #top_border = .4,
+                       bottom_border = 2,
+                       font_size = 15,
+                       text_color = matcdarkblue,
+                       bold = TRUE) %>%
+   add_rows(c(' ','','','',''),after = nrow(.)) %>%
+   set_background_color(row = nrow(.),col = 1:ncol(.), matcorange2) %>% 
+   set_cell_properties(row = nrow(.),col = 1:ncol(.), font_size = 5) %>%
+  #set_row_height(row = nrow(.), value = .2) %>%
+   set_cell_properties(row = 2, col = 1:ncol(.)-1,
+                       font_size = 11.5,
+                       bold = TRUE) %>%
+   set_bottom_border(row = 2, col = 1:ncol(.),value= .4, byrow = FALSE) %>%
+   set_cell_properties(row = 4:nrow(.)-1, col = 1,
+                       font_size = 11,
+                       text_color = matcblue,
+                       bold = TRUE) %>%
+   set_align(row = 2:nrow(.)-1, col = c(2,3,5), value = 'center', byrow = FALSE) %>%
+   set_align(row = 2:nrow(.)-1, col = 4, value = 'left', byrow = FALSE) %>%
+   set_bottom_border(row = nrow(.)-1, col = 1:ncol(.),value= .4, byrow = FALSE) %>%
+   set_all_padding(-1) %>%
+   set_top_padding(row = 1, col = 1:ncol(.),value= 2, byrow = FALSE) %>%
+   set_top_padding(row = nrow(.), col = 1:ncol(.),value= -3, byrow = FALSE)
+
+```
+
+<!-- \fontsize{6}{6}  keep values same to prevent bold font from shrinking when using ** -->
+\setlength{\parskip}{0mm}
+
+```{r}
+#DETAIL TABLES
+
+formatD <- function(s,i){
+  ht <-  as_hux(s[[3]][[i]],add_colnames = TRUE) %>%
+   #set_escape_contents(value = FALSE) %>%
+   #set_width('17cm') %>%
+   #set_height( value = '3cm') %>%
+   set_position('left') %>%
+   set_wrap(value= TRUE) %>%
+   set_all_border_colors(col = 1, every(), "black") %>%
+   add_rows(c(s[[2]][[i]],'','','',''),after = 0) %>%
+   merge_cells(row = 1,col = 1:ncol(.)) %>%     #merge row just added
+   set_cell_properties(row = 1, col = 1:ncol(.),
+                       #top_border = .4,
+                       bottom_border = 2,
+                       font_size = 13,
+                       text_color = matcblue,
+                       bold = TRUE) %>%
+   set_bottom_border(row = 2, col = 1:ncol(.),value= .4, byrow = FALSE) %>%
+   set_cell_properties(row = 2:nrow(.),
+                       col = 2:ncol(.),
+                       #top_border = .4,
+                       font_size = 9,
+                       text_color = 'black',
+                       na_string = '---') %>%
+   set_cell_properties(row = 2,
+                       col = c(1,3:ncol(.)),
+                       #top_border = .4,
+                       font_size = 12,
+                       text_color = 'black',
+                       na_string = '---') %>%
+   set_right_border(row = 3:nrow(.), col = 2,value= .2, byrow = FALSE) %>%
+   set_align(row = 2:nrow(.), col = 2:ncol(.), value = 'center', byrow = FALSE) %>%
+   set_col_width(value = c('8cm','2cm','2cm','2cm','2cm')) %>%
+   set_all_padding(-2) %>%
+   set_latex_float(value = '!htbp')
+   
+   if (nrow(ht) > 2) {
+      background_color(ht)[seq(3, nrow(ht), 2), ] <- grDevices::grey(.95)
+   }
+  
+
+  return(ht)
+}
+```
+
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+formatD(d,1) # External Demand
+````
+
+\begin{footnotesize}
+\begin{adjustwidth}{7mm}{12mm}
+ \textbf{Placement Rate:} Percent of all program respondents who affirmed employment in a related field after graduation.\par
+ \textbf{Transfer Agreements:}  Whether a program has a transfer agreement with a four-year institution. \par
+ \textbf{Employment Opportunities:}  Availability of job openings using a ratio of current openings to total employed in the Greater Milwaukee Area. The higher the value the more employment opportunities.\par
+ \textbf{Meet TSA Standard:}  Programs obtaining a phase 2 level in WTCS Technical Skills Attainment (TSA) are measured by the percent of program graduates who pass the TSA Program assessment. \par
+ \textbf{Graduate Wages:} Average wages reported in the graduate survey benchmarked by 350\% of the poverty level. \par
+ \textbf{Student Satification:}  Percent of all program graduate survey respondents who were 'very satified' or 'satified' with the training they received at MATC. \par
+ \textbf{High Demand Field:}  Whether the program is among the top 50 occupations in Wisconsin with heavy employer demand for qualified workers for both new jobs as well as replacements created by turnover or retirement. 
+
+\end{adjustwidth}
+\end{footnotesize}
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+formatD(d,2) # Student Success
+````
+
+\begin{footnotesize}
+\begin{adjustwidth}{7mm}{12mm}
+\textbf{Course Completion Rate:} Percent of courses within the program curriculum successfully completed by program students. \par
+\textbf{\%age Point Change in Course Completion Rate:} Rate of change in the course completion rate compared to the previous year. \par
+\textbf{Retention Rate:} Percent of new program students who started the program in a year and either graduated from the program in two years or are still enrolled in the second year.  \par
+\textbf{\%age Point Change in Retention Rate:} Rate of change in the retention rate compared to the previous year's cohort. \par
+\textbf{Graduation Rate:} Percent of new program students who graduated from the same program within two years for less than two year diploma programs or graduated within three years for associate degree programs.
+\par
+\textbf{\%age Point Change in Graduation Rate:} Rate of change in the graduation rate compared to the previous year's cohort. \par
+\end{adjustwidth}
+\end{footnotesize}
+
+\pagebreak[4]
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+formatD(d,3) # Program Uniqueness
+````
+
+\begin{footnotesize}
+\begin{adjustwidth}{7mm}{12mm}
+\textbf{Identical Programs within WTCS:} Number of WTCS colleges that also offer the same program code.  Smaller counts are awarded more points. \par
+\textbf{Identical Programs within MATC Region:} Number of higher education institutions offering associate degrees or less in the program's equivalent CIP code located in Milwaukee, Waukesha, and Ozaukee counties. Smaller counts are awarded more points. \par
+\textbf{Part of Pathway Credential:} Whether the program curriculum was approved as part of a stacked credential.  Pathway designations are valued over stand alone programs. \par
+\textbf{Dual Enrolled High School Student:} Whether a post-secondary course associated with the program includes a dual enrolled high school student. \par
+\textbf{Industry Validated Credential:} Whether the program curriculum was developed with business or industry input and is based on competencies and assessment reflecting skills and knowledge necessary for specific jobs. \par
+\textbf{Special Populations:} Percent of total students in the program who identify as a member of special populations as defined by WTCS.  They include Pell Grant recipients, minority students, veterans, incarcerated, dislocated workers, and students with disabilities.  \par
+\end{adjustwidth}
+\end{footnotesize}
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+formatD(d,4) # Cost Analysis
+```
+
+\begin{footnotesize}
+\begin{adjustwidth}{7mm}{12mm}
+\textbf{Program Total FTE:} Total full time equalivant (FTE) student count enrolled in the academic year. \par
+\textbf{\% Change in FTE from Previous Yr:} Rate of change in FTE compared to the previous year. \par
+\textbf{FTE \% Change Compared to MATC:} Rate of change in FTE compared to the MATC average rate of change for that year. \par
+\textbf{Program Total Headcount (HC):} Total unique count of program students enrolled in the academic year. \par
+\textbf{\% Change in HC from Previous Yr:} Rate of change in headcount compared to the previous year. \par
+\textbf{HC \% Change Compared to MATC:} Rate of change in HC compared to the MATC average rate of change for that year. \par
+\textbf{Revenue Growth:} Rate of change in revenues and expenditures of the associated department. \par
+\end{adjustwidth}
+\end{footnotesize}
+
+
+<!--
+
+ \textbf{NET INCOME COMPARISON:} Placeholder for future inclusion \par 
+ 
+ 
+\setlength{\parskip}{1mm}
+\fontsize{8}{10}
+\setlength{\parskip}{0mm}
+\fontseries{b}
+\titleformat{\section}{\normalfont\secfnt\bfseries}{\thesection}{1mm}{}
+\titlespacing{\section}{-5pt}{0pt plus 1pt minus 1pt}{0pt plus 1pt minus 1pt}
+\titlespacing{\subsection}{-5pt}{6pt plus 0pt minus 0pt}{0pt plus 2pt minus 2pt}
+\titlespacing{\subsubsection}{-5pt}{6pt plus 0pt minus 0pt}{0pt plus 2pt minus 2pt}
+-->
+
+

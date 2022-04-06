@@ -1,0 +1,34 @@
+STEPS TO SETUP R STUDIO ENVIRONMENT TO CREATE RMARKDOWN PDF FILES 
+   WRITTEN FOR PROGRAM PERFORMANCE MARTIX (PPM)
+   
+	- This was written after the PPM was complete so the instructions may be incomplete
+	- This assumes installation is all 64-bit
+	- Most of the install files are available: S:\RESEARCH\06_Program Evaluation\Program Performance Matrix\R_Project\software
+			but it is recommend obtaining most recent versions.
+	
+1. Install R
+2. Install R-STUDIO
+3. Install Rtools##.exe  
+		website: https://cran.r-project.org/bin/windows/Rtools/
+		Used the recommended version 
+		important: Install to default location!  Version 3.5 is C:/Rtools. This installation is 
+					very sensitive and I have had issues installing it in the past.
+4. Install TeXworks (interface for working with TeX documents)
+		website: https://sourceforge.net/projects/texworks.mirror/
+		note: most R Markdown setup instructions suggest installing miktex or tinytex.  These don't have 
+					features used to produce the PPM.  The template uses a specific Tex compiler which 
+					I don't recall at the time of writing this.
+5. It is recommended that the installation is tested before running the PPM scripts.  I'll need to work on 
+		a test script in the near future.
+		
+Addendem:
+
+SETTING UP ODBC DRIVER TO ACCESS LOCAL IPEDS DB
+
+	background:  Windows only installs a 32-bit ODBC Access Driver.  All the software used for the PPM is
+		is 64-bit.  Inorder to communicate with the IPEDS Access database the 64-bit driver needs to be installed.
+	install file: S:\RESEARCH\06_Program Evaluation\Program Performance Matrix\R_Project\software\AccessDatabaseEngine_X64.exe
+	website: https://www.microsoft.com/en-us/download/details.aspx?id=54920  click download, then select X64.exe file
+	
+	
+ 
